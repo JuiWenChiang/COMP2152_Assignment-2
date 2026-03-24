@@ -15,6 +15,7 @@ print("=" * 50)
 print("Python Version: ", platform.python_version())
 print("Operating System: ",os.name)
 
+# Common port numbers and their associated network protocols/services in a dictionary.
 common_ports = {
     21: "FTP",
     22: "SSH",
@@ -34,7 +35,7 @@ common_ports = {
 class NetworkTool:
     # constructor
     def __init__(self, target):
-        self.__target = target
+        self.target = target
 
     # Q3: What is the benefit of using @property and @target.setter?
     # This is the advantage of encapsulation; it restricts direct external access to and modification of properties within a class. 
@@ -47,7 +48,7 @@ class NetworkTool:
     @target.setter
     def target(self, value):
         if value == "":
-            raise ValueError("Target cannot be an empty string")
+            raise ValueError("Error: Target cannot be empty")
         else:
             self.__target = value
 
@@ -128,14 +129,15 @@ def save_results(target, results):
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS scans (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            target TEXT
-            port INTEGER
-            status TEXT
-            service TEXT
+            target TEXT,
+            port INTEGER,
+            status TEXT,
+            service TEXT,
             scan_date TEXT
             )"""
         )
         for result in results:
+            port, status, service = result
             cursor.execute(
                 "INSERT INTO scans (target, port, status, service, scan_date) VALUES (?, ?, ?, ?, ?)",
                 (target, port, status, service, str(datetime.datetime.now()))
@@ -224,6 +226,6 @@ if __name__ == "__main__":
 # Q5: New Feature Proposal
 # I want to add a customizable list of open ports for user-specified services. 
 # Users input interested services (e.g., HTTP, SSH, MySQL), then filter scan results 
-# where status is 'Open' and service matches user input using list comprehension. 
+# where status is 'Open' and service matches user input using list comprehension ([r for r in open_ports if r[2].upper() in interested_services]). 
 # This lets users focus only on relevant services they care about, greatly improving the user experience.
 # Diagram: See diagram_101571949.png in the repository root
